@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve project root
+ROOT_DIR="$(cd "$(dirname "$0")"; pwd)"
+cd "$ROOT_DIR"
+
+echo "[up] Loading user_config.env..."
+if [[ -f user_config.env ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source user_config.env || true
+  set +a
+else
+  echo "[up] user_config.env not found. Using defaults; edit Data-Mining-Project/user_config.env to set keys/models."
+fi
+
+echo "[up] Ensuring virtualenv..."
+if [[ ! -d .venv ]]; then
+  python3 -m venv .venv
+fi
+source .venv/bin/activate
+
+echo "[up] Installing requirements..."
+pip3 install -q --upgrade pip
+pip3 install -q -r requirements.txt
+
+export PYTHONPATH="$ROOT_DIR/src:${PYTHONPATH:-}"
+
+echo "[up] Running full pipeline (train, eval, eda)..."
+python3 -m dmp.cli train --config config.yaml
+python3 -m dmp.cli eval --config config.yaml
+python3 -m dmp.cli eda --config config.yaml
+
+LIVE_LOOP_FLAG=${LIVE_LOOP:-false}
+LIVE_INTERVAL=${LIVE_INTERVAL:-60}
+TICKER=${TICKER:-AAPL}
+
+if [[ "${LIVE_LOOP_FLAG}" == "true" ]]; then
+  echo "[up] Starting live inference loop for ${TICKER} every ${LIVE_INTERVAL}s..."
+  nohup python3 -m dmp.cli live --config config.yaml --ticker "${TICKER}" --loop --interval ${LIVE_INTERVAL} \
+    > artifacts/live.log 2>&1 &
+  echo $! > dmp_live.pid
+  echo "[up] Live loop started with PID $(cat dmp_live.pid). Logs: artifacts/live.log"
+else
+  echo "[up] Running one-shot live inference for ${TICKER}..."
+  python3 -m dmp.cli live --config config.yaml --ticker "${TICKER}"
+fi
+
+echo "[up] Done. Artifacts in artifacts/ and figures in reports/figures."

@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter and reports
+.ipynb_checkpoints/
+reports/
+artifacts/
+
+# User config and runtime
+user_config.env
+dmp_live.pid
+
+# OS files
+.DS_Store
+
+# Secrets
+.env
+secrets/keys.yaml

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")"; pwd)"
+cd "$ROOT_DIR"
+
+if [[ -f dmp_live.pid ]]; then
+  PID=$(cat dmp_live.pid || true)
+  if [[ -n "${PID}" ]] && ps -p "${PID}" > /dev/null 2>&1; then
+    echo "[down] Stopping live loop PID ${PID}..."
+    kill -TERM "${PID}" || true
+    sleep 1
+    if ps -p "${PID}" > /dev/null 2>&1; then
+      echo "[down] Force killing PID ${PID}..."
+      kill -KILL "${PID}" || true
+    fi
+  else
+    echo "[down] No running live loop found."
+  fi
+  rm -f dmp_live.pid
+else
+  echo "[down] No PID file present; nothing to stop."
+fi
+
+echo "[down] To remove generated artifacts, run: rm -rf artifacts reports/figures"
+echo "[down] To remove the virtualenv, run: rm -rf .venv"
+echo "[down] Done."
+
