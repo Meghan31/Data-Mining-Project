@@ -27,7 +27,6 @@ End-to-end stock analysis pipeline combining ML on historical data, real-time pr
 - `./down` stops the live loop. It also prints cleanup commands for artifacts/venv.
 
 **Commands**
-- `train`: trains the model and saves artifacts in `artifacts/`
 - `eval`: evaluates the saved model on the full frame
 - `eda`: generates plots to `reports/figures`
 - `live`: runs one live prediction + aggregated decision
