@@ -30,7 +30,6 @@ def download_kaggle_dataset(out_dir: str | Path) -> Optional[Path]:
     if not _kaggle_installed():
         return None
 
-    # Kaggle requires env vars KAGGLE_USERNAME and KAGGLE_KEY
     if not (os.getenv("KAGGLE_USERNAME") and os.getenv("KAGGLE_KEY")):
         return None
 
@@ -63,7 +62,6 @@ def load_kaggle_merged_csv(extracted_dir: str | Path) -> Optional[pd.DataFrame]:
     Returns a tidy DataFrame similar to yfinance format.
     """
     path = Path(extracted_dir)
-    # Heuristic: look for a large CSV named like "stocks.csv" or similar
     candidates = list(path.glob("**/*.csv"))
     if not candidates:
         return None

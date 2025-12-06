@@ -71,7 +71,6 @@ class AppConfig(BaseModel):
                         pass
         cfg = AppConfig(**content)
 
-        # Expand and create directories if needed
         artifacts = Path(cfg.general.artifacts_dir)
         figures = Path(cfg.general.figures_dir)
         artifacts.mkdir(parents=True, exist_ok=True)
